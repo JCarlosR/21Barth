@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">21Barth</string>
+    <string name="str_en">Ingles</string>
+    <string name="str_es">Español</string>
+    <string name="btn_pc">Jugar</string>
+    <string name="btn_online">jugar Online</string>
+    <string name="welcome">Bienvenido</string>
+</resources>

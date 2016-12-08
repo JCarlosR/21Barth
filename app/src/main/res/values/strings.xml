@@ -1,0 +1,38 @@
+<resources>
+    <string name="app_name">21Barth</string>
+    <string name="str_button" translatable="false">Change Language</string>
+    <string name="title_activity_login" translatable="false">Login</string>
+    <string name="title_activity_registro" translatable="false">Registro</string>
+    <string name="title_activity_recuperar" translatable="false">Recuperar</string>
+    <string name="title_activity_juego" translatable="false">Juego</string>
+    <string name="title_activity_buscarp" translatable="false">Buscar</string>
+    <string name="title_activity_online" translatable="false">Online</string>
+    <string name="title_activity_config" translatable="false">Configurar</string>
+    <string name="title_activity_ranking" translatable="false">Ranking</string>
+
+    <string name="str_en" >English</string>
+    <string name="str_es" >Spanish</string>
+    <string-array name="languages" >
+        <item>@string/str_en</item>
+        <item>@string/str_es</item>
+    </string-array>
+
+    <!--- Pantalla de bienvenida -->
+    <string name="welcome">Welcome</string>
+    <string name="btn_pc">Play</string>
+    <string name="btn_online">Play Online</string>
+
+    <!--- Pantalla del juego -->
+    <string name="you_busted" translatable="false">You busted!</string>
+    <string name="you_got_blackjack" translatable="false">You got blackjack!</string>
+    <string name="dealer_busted" translatable="false">Dealer busted!</string>
+    <string name="draw" translatable="false">Draw!</string>
+    <string name="you_won" translatable="false">You won!</string>
+    <string name="dealer_won" translatable="false">Dealer won!</string>
+    <string name="deal" translatable="false">Deal</string>
+    <string name="press_to_continue" translatable="false">Press to continue</string>
+    <string name="press_to_start_again" translatable="false">Press to start again</string>
+    <string name="game_over" translatable="false">Game over!</string>
+    <string name="hit" translatable="false">Hit</string>
+    <string name="stand" translatable="false">Stand</string>
+</resources>

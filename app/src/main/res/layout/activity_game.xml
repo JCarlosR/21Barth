@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context="no.mesan.mesanblackjack.GameActivity">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+    </android.support.design.widget.AppBarLayout>
+
+    <RelativeLayout
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:background="@drawable/background"
+        android:layout_marginTop="?attr/actionBarSize"
+        tools:showIn="@layout/activity_game">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerView_dealer"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/card_height"
+            android:layout_alignParentTop="true">
+        </android.support.v7.widget.RecyclerView>
+
+        <LinearLayout
+            android:layout_width="@dimen/score_width"
+            android:layout_height="@dimen/score_height"
+            android:layout_alignTop="@id/recyclerView_dealer"
+            android:layout_alignParentLeft="true"
+            android:layout_marginTop="@dimen/score_top"
+            android:layout_marginLeft="@dimen/score_left"
+            android:background="@drawable/score"
+            android:id="@+id/layout_dealer_score">
+
+            <TextView
+                android:id="@+id/txt_dealer_score"
+                android:gravity="center"
+                android:textColor="@color/textColorLight"
+                android:textSize="@dimen/score_text_size"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="30dp"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/recyclerView_dealer">
+
+            <LinearLayout
+                android:layout_width="@dimen/current_bet_width"
+                android:layout_height="@dimen/current_bet_height"
+                android:orientation="vertical"
+                android:layout_centerVertical="true"
+                android:gravity="center_horizontal"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="40dp"
+                android:background="@drawable/circle">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:id="@+id/txt_currentBet"
+                    android:textColor="@color/textColorLight"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center_horizontal"
+                android:layout_alignParentRight="true">
+
+                <ImageView
+                    android:layout_width="@dimen/chips_width"
+                    android:layout_height="@dimen/chips_height"
+                    android:src="@drawable/chip"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/txt_balance"
+                    android:textColor="@color/textColorLight"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+            </LinearLayout>
+        </RelativeLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerView_player"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/card_height"
+            android:layout_above="@+id/layout_action_buttons">
+        </android.support.v7.widget.RecyclerView>
+
+        <LinearLayout
+            android:layout_width="@dimen/score_width"
+            android:layout_height="@dimen/score_height"
+            android:layout_alignTop="@id/recyclerView_player"
+            android:layout_alignParentLeft="true"
+            android:layout_marginTop="@dimen/score_top"
+            android:layout_marginLeft="@dimen/score_left"
+            android:background="@drawable/score"
+            android:id="@+id/layout_player_score">
+
+            <TextView
+                android:id="@+id/txt_player_score"
+                android:text=""
+                android:textSize="@dimen/score_text_size"
+                android:gravity="center"
+                android:textColor="@color/textColorLight"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:id="@+id/layout_action_buttons"
+            android:layout_marginTop="10dp"
+            android:layout_above="@+id/layout_betting_buttons">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/hit"
+                android:layout_marginRight="8dp"
+                android:enabled="false"
+                android:id="@+id/btn_hit" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/stand"
+                android:enabled="false"
+                android:id="@+id/btn_stand" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:id="@id/layout_betting_buttons"
+            android:layout_alignParentBottom="true" >
+
+            <Button
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/btn_minus"
+                android:text="-" />
+
+            <TextView
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/txt_bet"
+                android:textColor="@color/textColorLight"
+                android:gravity="center_horizontal"
+                android:text="10" />
+
+            <Button
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/btn_plus"
+                android:text="+" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/btn_deal"
+                android:text="@string/deal" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:gravity="center_horizontal"
+            android:background="@drawable/result"
+            android:padding="24dp"
+            android:orientation="vertical"
+            android:id="@+id/layout_result"
+            android:visibility="invisible">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/you_won"
+                android:id="@+id/txt_result"
+                android:textColor="@color/textColorLight"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/press_to_continue"
+                android:textColor="@color/textColorLight"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:gravity="center_horizontal"
+            android:background="@drawable/result"
+            android:padding="24dp"
+            android:orientation="vertical"
+            android:id="@+id/layout_gameOver"
+            android:visibility="invisible">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/game_over"
+                android:textColor="@color/textColorLight"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/press_to_start_again"
+                android:textColor="@color/textColorLight"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</android.support.design.widget.CoordinatorLayout>

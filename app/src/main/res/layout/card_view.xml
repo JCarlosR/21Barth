@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/card_width"
+    android:layout_height="@dimen/card_height"
+    android:background="@drawable/front_image">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:orientation="vertical"
+        android:padding="@dimen/card_padding">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="A"
+            android:id="@+id/txt_value_upper"
+            android:textSize="@dimen/value_text_size"/>
+
+        <ImageView
+            android:layout_width="@dimen/suit_width"
+            android:layout_height="@dimen/suit_width"
+            android:src="@drawable/spades"
+            android:id="@+id/img_suit_upper"
+            android:layout_gravity="center_horizontal"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:orientation="vertical"
+        android:rotation="180"
+        android:padding="@dimen/card_padding">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="A"
+            android:id="@+id/txt_value_lower"
+            android:textSize="@dimen/value_text_size"/>
+
+        <ImageView
+            android:layout_width="@dimen/suit_width"
+            android:layout_height="@dimen/suit_width"
+            android:src="@drawable/spades"
+            android:id="@+id/img_suit_lower"
+            android:layout_gravity="center_horizontal"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

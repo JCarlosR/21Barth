@@ -61,9 +61,9 @@ Este primer paso finaliza en el instante que ambos han definido sus apuestas.
 2. Mostar cartas.
 En este instante, las cartas que obtuvieron los jugadores son mostradas, y cada jugador puede ver las cartas que tiene además de las del otro participante. No hay ningún problema porque ambos están jugando contra el dealer de forma independiente.
 
-- Si uno de los jugadores (podría aplicar incluso para ambos) ha obtenido BLACKJACK este paso a terminado para él. Cuando el paso finalice para ambos, recién se podrá ir a un tercer paso. Al igual que el caso anterior, no hay tiempo límite para actuar.
-- Cada jugador debe decidir entre las opciones HIT y STAND. La opción STAND finaliza este segundo paso para el jugador que ha decidido usar STAND. La opción de HIT finaliza el turno si el jugador excede 21 o si obtiene 21; de caso contrario, se puede usar HIT o STAND repitiendo lo antes mencionado.
-- El jugador que finalice su turno primero verá sus resultados de forma inmediata, pero no podrá continuar hasta que el otro jugador finalice.
+ - Si uno de los jugadores (podría aplicar incluso para ambos) ha obtenido BLACKJACK este paso a terminado para él. Cuando el paso finalice para ambos, recién se podrá ir a un tercer paso. Al igual que el caso anterior, no hay tiempo límite para actuar.
+ - Cada jugador debe decidir entre las opciones HIT y STAND. La opción STAND finaliza este segundo paso para el jugador que ha decidido usar STAND. La opción de HIT finaliza el turno si el jugador excede 21 o si obtiene 21; de caso contrario, se puede usar HIT o STAND repitiendo lo antes mencionado.
+ - El jugador que finalice su turno primero verá sus resultados de forma inmediata, pero no podrá continuar hasta que el otro jugador finalice.
 
 3. Resultados.
 Cuando finalice la acción de cada jugador según el punto anterior, se mostrarán los resultados para ambos jugadores.

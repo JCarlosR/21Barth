@@ -14,8 +14,16 @@
     <dimen name="score_height">30dp</dimen>
     <dimen name="current_bet_width">55dp</dimen>
     <dimen name="current_bet_height">35dp</dimen>
+
+    <!-- Chip dimens -->
     <dimen name="chips_width">50dp</dimen>
     <dimen name="chips_height">50dp</dimen>
+    <dimen name="small_chips_width">32dp</dimen>
+    <dimen name="small_chips_height">32dp</dimen>
+
+    <!-- Bet icon dimens -->
+    <dimen name="bet_width">24dp</dimen>
+    <dimen name="bet_height">24dp</dimen>
 
     <!-- Text size -->
     <dimen name="score_text_size">20sp</dimen>

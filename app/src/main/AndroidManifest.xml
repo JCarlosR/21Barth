@@ -32,7 +32,7 @@
             android:label="@string/title_activity_juego"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".Online"
+            android:name=".OnlineActivity"
             android:label="@string/title_activity_online"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity

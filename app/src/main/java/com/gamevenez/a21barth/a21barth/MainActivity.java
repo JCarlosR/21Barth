@@ -6,21 +6,34 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Button boton = (Button) findViewById(R.id.btn_pc);
-        boton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent ListSong = new Intent(getApplicationContext(), GameActivity.class);
-                startActivity(ListSong);
-            }
-        });
+        Button btnPC = (Button) findViewById(R.id.btn_pc);
+        btnPC.setOnClickListener(this);
 
+        Button btnPlayOnline = (Button) findViewById(R.id.btn_play_online);
+        btnPlayOnline.setOnClickListener(this);
+    }
+
+    @Override
+    public void onClick(View view) {
+        Intent intent;
+        switch (view.getId())
+        {
+            case R.id.btn_pc:
+                intent = new Intent(this, GameActivity.class);
+                startActivity(intent);
+                break;
+
+            case R.id.btn_play_online:
+                intent = new Intent(this, OnlineActivity.class);
+                startActivity(intent);
+                break;
+        }
     }
 }

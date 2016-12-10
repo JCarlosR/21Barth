@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.gamevenez.a21barth.a21barth.Online">
+    tools:context=".OnlineActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -21,14 +22,351 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_online" />
+    <LinearLayout
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="8dp"
+        android:orientation="vertical"
+        android:background="@drawable/background"
+        android:layout_marginTop="?attr/actionBarSize"
+        tools:showIn="@layout/activity_game">
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
-        app:srcCompat="@android:drawable/ic_dialog_email" />
+        <LinearLayout
+            android:baselineAligned="false"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:orientation="horizontal"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/rvCardsDealer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/card_height">
+                </android.support.v7.widget.RecyclerView>
+
+                <FrameLayout
+                    android:layout_width="@dimen/score_width"
+                    android:layout_height="@dimen/score_height"
+                    android:background="@drawable/score"
+                    android:id="@+id/layoutDealerScore">
+
+                    <TextView
+                        android:id="@+id/txtScoreDealer"
+                        android:gravity="center"
+                        android:textColor="@color/textColorLight"
+                        android:textSize="@dimen/score_text_size"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"/>
+                </FrameLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:layout_height="match_parent">
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:layout_weight="3"
+                    android:layout_width="0dp"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:layout_height="wrap_content">
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/rvCards1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/card_height">
+                    </android.support.v7.widget.RecyclerView>
+
+                    <FrameLayout
+                        android:layout_marginTop="8dp"
+                        android:layout_width="@dimen/score_width"
+                        android:layout_height="@dimen/score_height"
+                        android:background="@drawable/score"
+                        android:id="@+id/layoutScore1">
+                        <TextView
+                            android:id="@+id/txtScore1"
+                            android:text=""
+                            android:textSize="@dimen/score_text_size"
+                            android:gravity="center"
+                            android:textColor="@color/textColorLight"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"/>
+
+                    </FrameLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_weight="2"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="@dimen/small_chips_width"
+                        android:layout_height="@dimen/small_chips_height"
+                        android:src="@drawable/chip"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/txtBalance1"
+                        android:textColor="@color/textColorLight"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+                    <ImageView
+                        android:layout_width="@dimen/bet_width"
+                        android:layout_height="@dimen/bet_height"
+                        android:src="@drawable/bet"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:id="@+id/txtCurrentBet1"
+                        android:textColor="@color/textColorLight"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:layout_weight="3"
+                    android:layout_width="0dp"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:layout_height="wrap_content">
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/rvCards2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/card_height">
+                    </android.support.v7.widget.RecyclerView>
+
+                    <FrameLayout
+                        android:layout_marginTop="8dp"
+                        android:layout_width="@dimen/score_width"
+                        android:layout_height="@dimen/score_height"
+                        android:background="@drawable/score"
+                        android:id="@+id/layoutScore2">
+                        <TextView
+                            android:id="@+id/txtScore2"
+                            android:text=""
+                            android:textSize="@dimen/score_text_size"
+                            android:gravity="center"
+                            android:textColor="@color/textColorLight"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"/>
+
+                    </FrameLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_weight="2"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="@dimen/small_chips_width"
+                        android:layout_height="@dimen/small_chips_height"
+                        android:src="@drawable/chip"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/txtBalance2"
+                        android:textColor="@color/textColorLight"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+                    <ImageView
+                        android:layout_width="@dimen/bet_width"
+                        android:layout_height="@dimen/bet_height"
+                        android:src="@drawable/bet"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:id="@+id/txtCurrentBet2"
+                        android:textColor="@color/textColorLight"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:id="@+id/layout_action_buttons"
+                    android:layout_marginTop="10dp">
+
+                    <Button
+                        android:layout_weight="1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/hit"
+                        android:enabled="false"
+                        android:id="@+id/btnHit" />
+
+                    <Button
+                        android:layout_weight="1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/stand"
+                        android:enabled="false"
+                        android:id="@+id/btnStand" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:id="@+id/layout_betting_buttons">
+
+                    <LinearLayout
+                        android:layout_weight="1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content">
+                        <Button
+                            android:layout_width="50dp"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/btnMinus"
+                            android:text="-" />
+
+                        <TextView
+                            android:layout_width="50dp"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/txtBetOptions"
+                            android:textColor="@color/textColorLight"
+                            android:gravity="center_horizontal"
+                            android:text="10" />
+
+                        <Button
+                            android:layout_width="50dp"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/btnPlus"
+                            android:text="+" />
+                    </LinearLayout>
+
+                    <Button
+                        android:layout_weight="1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/btnDeal"
+                        android:text="@string/deal" />
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:background="@drawable/result"
+                android:padding="24dp"
+                android:orientation="vertical"
+                android:id="@+id/layoutResult"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/you_won"
+                    android:id="@+id/txtResult"
+                    android:textColor="@color/textColorLight"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/press_to_continue"
+                    android:textColor="@color/textColorLight"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:background="@drawable/result"
+                android:padding="24dp"
+                android:orientation="vertical"
+                android:id="@+id/layoutGameOver"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/game_over"
+                    android:textColor="@color/textColorLight"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/press_to_start_again"
+                    android:textColor="@color/textColorLight"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
+            </LinearLayout>
+        </FrameLayout>
+
+    </LinearLayout>
 
 </android.support.design.widget.CoordinatorLayout>

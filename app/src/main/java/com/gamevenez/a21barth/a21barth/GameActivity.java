@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -14,7 +15,7 @@ import com.gamevenez.a21barth.a21barth.adapter.CardAdapter;
 import com.gamevenez.a21barth.a21barth.adapter.ItemDecorator;
 import com.gamevenez.a21barth.a21barth.model.Game;
 
-public class Juego extends AppCompatActivity {
+public class GameActivity extends AppCompatActivity {
 
     private Game game;
 
@@ -25,9 +26,10 @@ public class Juego extends AppCompatActivity {
     private CardAdapter dealerCardAdapter, playerCardAdapter;
     private TextView dealerScoreText, playerScoreText, currentBetText, balanceText, betText, resultText;
     private Button hitButton, standButton, minusButton, plusButton, dealButton;
-    private LinearLayout dealerScoreLayout, playerScoreLayout, resultLayout, gameOverLayout;
+    private FrameLayout dealerScoreLayout, playerScoreLayout;
+    private LinearLayout resultLayout, gameOverLayout;
 
-    public Juego() {
+    public GameActivity() {
         game = new Game();
     }
 
@@ -66,9 +68,9 @@ public class Juego extends AppCompatActivity {
         plusButton = (Button)findViewById(R.id.btn_plus);
         dealButton = (Button)findViewById(R.id.btn_deal);
 
-        dealerScoreLayout = (LinearLayout)findViewById(R.id.layout_dealer_score);
+        dealerScoreLayout = (FrameLayout)findViewById(R.id.layout_dealer_score);
         dealerScoreLayout.setVisibility(View.GONE);
-        playerScoreLayout = (LinearLayout)findViewById(R.id.layout_player_score);
+        playerScoreLayout = (FrameLayout)findViewById(R.id.layout_player_score);
         playerScoreLayout.setVisibility(View.GONE);
         resultLayout = (LinearLayout)findViewById(R.id.layout_result);
         gameOverLayout = (LinearLayout)findViewById(R.id.layout_gameOver);

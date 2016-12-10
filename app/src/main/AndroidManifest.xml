@@ -28,12 +28,8 @@
             android:label="@string/title_activity_recuperar"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".Juego"
+            android:name=".GameActivity"
             android:label="@string/title_activity_juego"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".Buscarp"
-            android:label="@string/title_activity_buscarp"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Online"

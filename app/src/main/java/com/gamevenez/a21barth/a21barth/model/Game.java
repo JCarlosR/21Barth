@@ -5,7 +5,7 @@ public class Game {
     private Dealer dealer;
     private Player player;
     private Deck deck;
-    private int startMoney = 100;
+    private static final int INITIAL_MONEY = 100;
 
     public enum Outcome {
         PLAYER, DEALER, DRAW
@@ -14,7 +14,7 @@ public class Game {
     public Game() {
         deck = new Deck();
         dealer = new Dealer(deck.createStartHand());
-        player = new Player(deck.createStartHand(), startMoney);
+        player = new Player(deck.createStartHand(), INITIAL_MONEY);
     }
 
     public void dealAgain() {

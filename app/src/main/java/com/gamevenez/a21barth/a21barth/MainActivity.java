@@ -17,7 +17,7 @@ public class MainActivity extends AppCompatActivity {
         boton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent ListSong = new Intent(getApplicationContext(), Juego.class);
+                Intent ListSong = new Intent(getApplicationContext(), GameActivity.class);
                 startActivity(ListSong);
             }
         });

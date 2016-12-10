@@ -1,8 +1,5 @@
 package com.gamevenez.a21barth.a21barth.model;
 
-/**
- * Created by Thomas on 21.04.2016.
- */
 public abstract class Participant {
 
     private Hand hand;

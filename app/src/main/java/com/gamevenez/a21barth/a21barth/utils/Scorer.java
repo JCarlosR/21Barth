@@ -8,9 +8,6 @@ import java.util.List;
 import com.gamevenez.a21barth.a21barth.model.Card;
 import com.gamevenez.a21barth.a21barth.model.Value;
 
-/**
- * Created by mikkels on 19/04/16.
- */
 public class Scorer {
     private final static Scorer instance = new Scorer();
 

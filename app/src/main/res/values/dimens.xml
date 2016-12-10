@@ -12,8 +12,8 @@
     <dimen name="score_top">50dp</dimen>
     <dimen name="score_width">40dp</dimen>
     <dimen name="score_height">30dp</dimen>
-    <dimen name="current_bet_width">70dp</dimen>
-    <dimen name="current_bet_height">50dp</dimen>
+    <dimen name="current_bet_width">55dp</dimen>
+    <dimen name="current_bet_height">35dp</dimen>
     <dimen name="chips_width">50dp</dimen>
     <dimen name="chips_height">50dp</dimen>
 

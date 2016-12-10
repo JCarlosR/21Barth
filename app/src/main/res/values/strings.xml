@@ -35,4 +35,8 @@
     <string name="game_over" translatable="false">Game over!</string>
     <string name="hit" translatable="false">Hit</string>
     <string name="stand" translatable="false">Stand</string>
+
+    <!-- Player labels -->
+    <string name="current_bet_label">Bet</string>
+    <string name="my_balance_label">My balance</string>
 </resources>

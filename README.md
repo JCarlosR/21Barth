@@ -16,7 +16,7 @@ Y un poco más a la derecha, su score actual.
 Finalmente, en la parte inferior se encuentran las opciones del juego.
 
 
-Versión basada en turnos (online) (2 jugadores y 1 dealer)
+Versión realtime (online) (2 jugadores y dealer)
 ---
 Los elementos visuales se han reorganizado con la finalidad de que quepan los nuevos componentes asociados al segundo jugador.
 

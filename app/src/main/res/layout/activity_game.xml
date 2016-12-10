@@ -42,7 +42,7 @@
                 android:layout_weight="1"
                 android:layout_width="0dp"
                 android:orientation="horizontal"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:gravity="center">
 
                 <android.support.v7.widget.RecyclerView
@@ -73,31 +73,18 @@
                 android:layout_weight="1"
                 android:layout_width="0dp"
                 android:orientation="vertical"
-                android:layout_height="wrap_content">
+                android:gravity="center"
+                android:layout_height="match_parent">
 
-                <LinearLayout
+                <TextView
+                    android:textColor="@color/textColorLight"
+                    android:text="@string/current_bet_label"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:gravity="center_horizontal">
-
-                    <ImageView
-                        android:layout_width="@dimen/chips_width"
-                        android:layout_height="@dimen/chips_height"
-                        android:src="@drawable/chip"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/txt_balance"
-                        android:textColor="@color/textColorLight"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
-                </LinearLayout>
+                    android:layout_height="wrap_content" />
 
                 <FrameLayout
                     android:layout_width="@dimen/current_bet_width"
                     android:layout_height="@dimen/current_bet_height"
-                    android:gravity="center_horizontal"
                     android:background="@drawable/circle">
 
                     <TextView
@@ -122,9 +109,9 @@
             <LinearLayout
                 android:layout_weight="1"
                 android:layout_width="0dp"
-                android:orientation="vertical"
+                android:orientation="horizontal"
                 android:gravity="center"
-                android:layout_height="wrap_content">
+                android:layout_height="match_parent">
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/recyclerView_player"
@@ -155,7 +142,27 @@
             <LinearLayout
                 android:layout_weight="1"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content">
+                android:orientation="vertical"
+                android:gravity="center"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:textColor="@color/textColorLight"
+                    android:text="@string/my_balance_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <ImageView
+                    android:layout_width="@dimen/chips_width"
+                    android:layout_height="@dimen/chips_height"
+                    android:src="@drawable/chip"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/txt_balance"
+                    android:textColor="@color/textColorLight"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
             </LinearLayout>
 

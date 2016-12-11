@@ -72,3 +72,23 @@ En este punto, se solicitará que realicen click sobre el mensaje que muestra los
 Cuando ambos hayan confirmado se repetirá lo descrito en (1). Sin embargo, si uno de ellos llega a tener un balance de 0, el juego terminaría para ambos. Esto es para evitar definir por ahora una lógica que permita a uno jugar y al otro solo observar.
 
 * Por ahora, la lógica que soporta este flujo es la entidad GameOnline, que se ha basado en la entidad Game, pero que soporta 2 jugadores y las consideraciones para jugar de forma online. Los jugadores por ahora son atributos de tipo Player. Se espera en versiones posteriores, reemplazar estos 2 objetos por un ArrayList que soporte una mayor cantidad de participantes en simultáneo.
+
+Broadcast
+---
+El juego ButtonClicker2000 (que Google ha publicado a modo de ejemplo) consiste en que cada jugador hace broadcast (emite mensajes) a los demás jugadores, informando por cada click que ha realizado.
+
+Estos mensajes se emiten a través de un buffer (determinado por un arreglo de bytes), y en el caso del juego mencionado existen 2 tipos de mensajes. 
+Un primer tipo comunica a los demás jugadores el valor del score del jugador que emite el mensaje, y esto ocurre cada vez que se hace click durante los 20 segundos que dura el juego.
+Un segundo tipo, también comunica el score del jugador, pero es un score que se emite solo una vez al final del juego, cunado el tiempo se ha agotado.
+En este caso, el buffer consta de 2 bytes, el primero indica el tipo de mensaje a través de una letra y el segundo byte es el score del jugador.
+
+En el caso de 21Barth, debemos manejar más tipos de mensajes. Estos mensajes comunicarán al otro jugador la acción que cada uno de ellos realiza. Así tenemos:
+
+- Definir apuesta. Indica que el jugador ha presionado el botón de DEAL luego de definir el valor de su apuesta. En este caso el array de bytes constará de 2 bytes. El primer byte será la letra "D" y el segundo byte contendrá el valor que se ha decidido apostar.
+
+- Solicitar carta. Indica que el jugador ha presionado el botón HIT. En este caso el host va a generar una carta y hará broadcast de este valor al jugador que presionó HIT. Solicitar 1 carta se representa por 2 bytes: el caracter H y el número 0.
+Mientras que asignar una carta se representa por 3 bytes: el caracter H, un caracter que representa un suite (HEARTS, DIAMONDS, CLUBS, SPADES) y un value (representado por un caracter, por ejemplo "A", "Q", "1").
+
+- Finalizar jugada. Indica que el jugador ha presionado el botón STAND. En este caso el buffer a comunicar consta solo de 1 caracter, determinado por la letra S.
+
+- Repartir mano inicial. Este mensaje lo emite el host de la partida y se usa para comunicar las 2 primeras cartas al jugador que no es host. El formato del mensaje es I, seguido de un suite y un value correspondientes a la primera carta, y luego nuevamente un suite y value (segunda carta).

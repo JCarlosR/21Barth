@@ -29,13 +29,22 @@ public class GameOnline {
     public Hand getDealerHand() {
         return dealer.getHand();
     }
+    public void setDealerHand(Hand hand) {
+        dealer.setHand(hand);
+    }
 
     public Hand getPlayer1Hand() {
         return player1.getHand();
     }
+    public void setPlayer1Hand(Hand hand) {
+        player1.setHand(hand);
+    }
 
     public Hand getPlayer2Hand() {
         return player2.getHand();
+    }
+    public void setPlayer2Hand(Hand hand) {
+        player2.setHand(hand);
     }
 
     public int getDealerScore() {
@@ -130,12 +139,21 @@ public class GameOnline {
         dealer.dealCard(deck.getRandomCard());
     }
 
-    public void dealPlayer1Card() {
-        player1.dealCard(deck.getRandomCard());
+    public Card dealPlayer1Card() {
+        Card randomCard = deck.getRandomCard();
+        player1.dealCard(randomCard);
+        return randomCard;
     }
-
-    public void dealPlayer2Card() {
-        player2.dealCard(deck.getRandomCard());
+    public void setPlayer1CardDealt(Card cardDealt) {
+        player1.dealCard(cardDealt);
+    }
+    public Card dealPlayer2Card() {
+        Card randomCard = deck.getRandomCard();
+        player2.dealCard(randomCard);
+        return randomCard;
+    }
+    public void setPlayer2CardDealt(Card cardDealt) {
+        player2.dealCard(cardDealt);
     }
 
     public void resetPlayersHands() {

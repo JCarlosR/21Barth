@@ -86,8 +86,10 @@ En el caso de 21Barth, debemos manejar más tipos de mensajes. Estos mensajes com
 
 - Definir apuesta. Indica que el jugador ha presionado el botón de DEAL luego de definir el valor de su apuesta. En este caso el array de bytes constará de 2 bytes. El primer byte será la letra "D" y el segundo byte contendrá el valor que se ha decidido apostar.
 
-- Solicitar carta. Indica que el jugador ha presionado el botón HIT. En este caso el host va a generar una carta y hará broadcast de este valor al jugador que presionó HIT. Solicitar 1 carta se representa por 2 bytes: el caracter H y el número 0.
-Mientras que asignar una carta se representa por 3 bytes: el caracter H, un caracter que representa un suite (HEARTS, DIAMONDS, CLUBS, SPADES) y un value (representado por un caracter, por ejemplo "A", "Q", "1").
+- Reparto inicial. Luego de fijadas las apuestas, el host comunicará a los demás jugadores las cartas que cada uno obtuvo y también las cartas del dealer. En este caso el buffer constará de un caracter I que marca el tipo de mensaje (reparto inicial), y seguidamente el par de cartas correspondientes al dealer, player 1 y player 2. A su vez cada carta se representa por 2 bytes, uno correspondiente al suite de la carta, y el otro al value.
+
+- Solicitar carta. Indica que el jugador ha presionado el botón HIT. En este caso el host va a generar una carta y hará broadcast de este valor (no solo al jugador que presionó HIT). Solicitar 1 carta se representa por 2 bytes: el caracter H y el número 0.
+- Repartir carta. Asignar una carta se representa por 4 bytes: el caracter H, un número indicando a quién le pertenece la carta, un caracter que representa un suite (HEARTS, DIAMONDS, CLUBS, SPADES) y un value (representado por un caracter, por ejemplo "A", "Q", "1").
 
 - Finalizar jugada. Indica que el jugador ha presionado el botón STAND. En este caso el buffer a comunicar consta solo de 1 caracter, determinado por la letra S.
 

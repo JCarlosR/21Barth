@@ -19,8 +19,9 @@ import android.widget.Toast;
 
 import com.gamevenez.a21barth.a21barth.adapter.CardAdapter;
 import com.gamevenez.a21barth.a21barth.adapter.ItemDecorator;
-import com.gamevenez.a21barth.a21barth.model.Game;
+import com.gamevenez.a21barth.a21barth.model.Card;
 import com.gamevenez.a21barth.a21barth.model.GameOnline;
+import com.gamevenez.a21barth.a21barth.model.Hand;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.games.Games;
@@ -55,14 +56,14 @@ public class OnlineActivity extends AppCompatActivity
     private GameOnline game;
 
     private static int MINIMUM_BET = 10;
-    private int currentBet = MINIMUM_BET;
+    private int currentBet = MINIMUM_BET; // value displayed in the bottom panel
 
     private RecyclerView rvCardsDealer, rvCards1, rvCards2;
     private CardAdapter dealerCardAdapter, playerCardAdapter1, playerCardAdapter2;
     private TextView dealerScoreText, scoreText1, scoreText2,
-            currentBet1, currentBet2,
+            betText1, betText2,
             balanceText1, balanceText2,
-            betText, resultText;
+            amountToBetText, resultText;
     private Button hitButton, standButton, minusButton, plusButton, dealButton;
     private FrameLayout dealerScoreLayout, scoreLayout1, scoreLayout2;
     private LinearLayout resultLayout, gameOverLayout;
@@ -101,14 +102,12 @@ public class OnlineActivity extends AppCompatActivity
     // The participants in the currently active game
     ArrayList<Participant> mParticipants = null;
 
-    // My participant ID in the currently active game
+    // My participant ID
     String mMyId = null;
+    boolean mIAmHost = false;
 
     // If non-null, this is the id of the invitation we received via the invitation listener
     String mIncomingInvitationId = null;
-
-    // Message buffer for sending messages
-    byte[] mMsgBuf = new byte[2];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -162,7 +161,7 @@ public class OnlineActivity extends AppCompatActivity
     }
 
     // Leave the room.
-    void leaveRoom() {
+    private void leaveRoom() {
         // mSecondsLeft = 0;
         stopKeepingScreenOn();
 
@@ -202,10 +201,10 @@ public class OnlineActivity extends AppCompatActivity
         scoreText2 = (TextView)findViewById(R.id.txtScore2);
 
         // Bet in the current round
-        currentBet1 = (TextView)findViewById(R.id.txtCurrentBet1);
-        currentBet1.setVisibility(View.GONE);
-        currentBet2 = (TextView)findViewById(R.id.txtCurrentBet2);
-        currentBet2.setVisibility(View.GONE);
+        betText1 = (TextView)findViewById(R.id.txtCurrentBet1);
+        betText1.setVisibility(View.GONE);
+        betText2 = (TextView)findViewById(R.id.txtCurrentBet2);
+        betText2.setVisibility(View.GONE);
 
         // Balance texts
         balanceText1 = (TextView)findViewById(R.id.txtBalance1);
@@ -214,8 +213,8 @@ public class OnlineActivity extends AppCompatActivity
         balanceText2.setText(String.valueOf(game.getPlayer2Balance()));
 
         // Bet text in options
-        betText = (TextView)findViewById(R.id.txtBetOptions);
-        betText.setText(String.valueOf(currentBet));
+        amountToBetText = (TextView)findViewById(R.id.txtBetOptions);
+        amountToBetText.setText(String.valueOf(currentBet));
         // Result messages
         resultText = (TextView)findViewById(R.id.txtResult);
 
@@ -292,7 +291,7 @@ public class OnlineActivity extends AppCompatActivity
         gameOverLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startNewGame();
+                resetGameVars();
             }
         });
     }
@@ -300,7 +299,7 @@ public class OnlineActivity extends AppCompatActivity
     private void decreaseBet() {
         if (currentBet > MINIMUM_BET) {
             currentBet -= 10;
-            betText.setText(String.valueOf(currentBet));
+            amountToBetText.setText(String.valueOf(currentBet));
 
             plusButton.setEnabled(true);
             if (currentBet == MINIMUM_BET) {
@@ -310,66 +309,153 @@ public class OnlineActivity extends AppCompatActivity
     }
 
     private void increaseBet() {
-        /*int balance = game.getPlayerBalance();
+        int balance;
+        if (mIAmHost)
+            balance = game.getPlayer1Balance();
+        else balance = game.getPlayer2Balance();
+
         if (currentBet <= balance - 10) {
             currentBet += 10;
-            betText.setText(String.valueOf(currentBet));
+            amountToBetText.setText(String.valueOf(currentBet));
 
             minusButton.setEnabled(true);
             if (currentBet == balance) {
                 plusButton.setEnabled(false);
             }
-        }*/
+        }
     }
 
-    private void startNewGame() {
-        Log.d(TAG, "startNewGame, my id => " + mMyId);
+    private void setupInitialGameData() {
+        // If I am the host, I have to setup the game for each deal
+        // Host is always the player 1 (position 0 in the participants array)
 
+        // Initial game state
+        CURRENT_GAME_STATE = WAITING_FOR_BETS;
+        // Switch to game screen
+        switchToScreen(R.id.screen_game);
+    }
+
+    private void resetGameVars()
+    {
         game.resetPlayersBalance();
         game.resetPlayersHands();
         currentBet = MINIMUM_BET;
-/*
-        dealerCardAdapter.notifyDataSetChanged();
-        playerCardAdapter1.notifyDataSetChanged();
+        amountToBetText.setText(String.valueOf(currentBet));
 
-        currentBet1.setVisibility(View.INVISIBLE);
-        balanceText1.setText(String.valueOf(game.getPlayerBalance()));
-        betText.setText(String.valueOf(currentBet));
+        if (dealerCardAdapter != null)
+            dealerCardAdapter.notifyDataSetChanged();
+        if (playerCardAdapter1 != null)
+            playerCardAdapter1.notifyDataSetChanged();
+        if (playerCardAdapter2 != null)
+            playerCardAdapter2.notifyDataSetChanged();
 
+        betText1.setVisibility(View.INVISIBLE);
+        balanceText1.setText(String.valueOf(game.getPlayer1Balance()));
+        betText2.setVisibility(View.INVISIBLE);
+        balanceText2.setText(String.valueOf(game.getPlayer2Balance()));
+
+        enableActionButtons(false);
         enableDealButtons(true);
 
         dealerScoreLayout.setVisibility(View.INVISIBLE);
         scoreLayout1.setVisibility(View.INVISIBLE);
+        scoreLayout2.setVisibility(View.INVISIBLE);
         gameOverLayout.setVisibility(View.INVISIBLE);
-        */
     }
 
     private void dealCards() {
-        game.dealAgain();
-        // game.playerBet(currentBet);
+        // store my bet (it allows us to determine when both have bet)
+        mParticipantBets.put(mMyId, currentBet);
 
-        dealerCardAdapter = new CardAdapter(game.getDealerHand());
-        // playerCardAdapter1 = new CardAdapter(game.getPlayerHand());
-
-        rvCardsDealer.setAdapter(dealerCardAdapter);
-        rvCards1.setAdapter(playerCardAdapter1);
+        // display my bet
+        if (mIAmHost)
+            game.player1Bet(currentBet);
+        else
+            game.player2Bet(currentBet);
 
         dealerScoreText.setText("?");
-        // scoreText1.setText(String.valueOf(game.getPlayerScore()));
-        // balanceText1.setText(String.valueOf(game.getPlayerBalance()));
-        currentBet1.setText(String.valueOf(currentBet));
-        currentBet1.setVisibility(View.VISIBLE);
-
-        enableActionButtons(true);
-        enableDealButtons(false);
-
         dealerScoreLayout.setVisibility(View.VISIBLE);
-        scoreLayout1.setVisibility(View.VISIBLE);
-/*
-        if (game.playerHasBlackjack()) {
+
+        // broadcast my bet
+        broadcastMyBet(currentBet);
+
+        // update the UI after bet
+        if (mIAmHost) {
+            balanceText1.setText(String.valueOf(game.getPlayer1Balance()));
+            betText1.setText(String.valueOf(currentBet));
+            betText1.setVisibility(View.VISIBLE);
+        } else {
+            balanceText2.setText(String.valueOf(game.getPlayer2Balance()));
+            betText2.setText(String.valueOf(currentBet));
+            betText2.setVisibility(View.VISIBLE);
+        }
+
+        // disable the deal buttons
+        enableDealButtons(false);
+        // the action buttons will be enabled when all players have bet
+
+        checkIfAllBet();
+    }
+    private void broadcastMyBet(int currentBet) {
+        // if I press the deal button I will broadcast my bet
+        byte[] buffer = new byte[2];
+        buffer[0] = (byte) 'D';
+        buffer[1] = (byte) currentBet;
+        broadcastMessageBuffer(buffer);
+    }
+
+    private void dealCompleted()
+    {
+        if (! mIAmHost) return;
+
+        // when both players have press the deal button the host proceed
+        game.dealAgain();
+        updateCardsAndScores();
+
+        // enable the action buttons for the host
+        enableActionButtons(true);
+
+        // if the host got blackjack
+        if (game.player1HasBlackjack()) {
             enableActionButtons(false);
             playerBlackjack();
-        }*/
+        }
+
+        broadcastDealResults();
+    }
+    private void broadcastDealResults() {
+        byte[] buffer = new byte[13];
+        buffer[0] = (byte) 'I';
+
+        // append the dealer hand
+        List<Card> cardsList = game.getDealerHand().getCards();
+        Card firstCard = cardsList.get(0);
+        buffer[1] = firstCard.getSuitByte();
+        buffer[2] = firstCard.getValueByte();
+        Card secondCard = cardsList.get(1);
+        buffer[3] = secondCard.getSuitByte();
+        buffer[4] = secondCard.getValueByte();
+
+        // append the player 1 hand
+        cardsList = game.getPlayer1Hand().getCards();
+        firstCard = cardsList.get(0);
+        buffer[5] = firstCard.getSuitByte();
+        buffer[6] = firstCard.getValueByte();
+        secondCard = cardsList.get(1);
+        buffer[7] = secondCard.getSuitByte();
+        buffer[8] = secondCard.getValueByte();
+
+        // append the player 2 hand
+        cardsList = game.getPlayer2Hand().getCards();
+        firstCard = cardsList.get(0);
+        buffer[9] = firstCard.getSuitByte();
+        buffer[10] = firstCard.getValueByte();
+        secondCard = cardsList.get(1);
+        buffer[11] = secondCard.getSuitByte();
+        buffer[12] = secondCard.getValueByte();
+
+        // broadcast the round game data
+        broadcastMessageBuffer(buffer);
     }
 
     private void newRound() {
@@ -381,8 +467,8 @@ public class OnlineActivity extends AppCompatActivity
 
         dealerScoreText.setText("?");
         scoreText1.setText("");
-        currentBet1.setVisibility(View.GONE);
-        betText.setText(String.valueOf(currentBet));
+        betText1.setVisibility(View.GONE);
+        amountToBetText.setText(String.valueOf(currentBet));
 
         enableActionButtons(false);
         enableDealButtons(true);
@@ -393,18 +479,44 @@ public class OnlineActivity extends AppCompatActivity
     }
 
     private void playerHits() {
-        /*game.dealPlayerCard();
-
-        playerCardAdapter1.notifyDataSetChanged();
-        scoreText1.setText(String.valueOf(game.getPlayerScore()));
-
-        if (game.playerHasBlackjack()) {
-            playerStands();
-            enableActionButtons(false);
-        } else if (game.playerHasBusted()) {
-            playerBusts();
-            enableActionButtons(false);
-        }*/
+        if (mIAmHost) {
+            Card cardDealt = game.dealPlayer1Card();
+            playerCardAdapter1.notifyDataSetChanged();
+            scoreText1.setText(String.valueOf(game.getPlayer1Score()));
+            broadcastHostHit(cardDealt);
+/*
+            if (game.player1HasBlackjack()) {
+                playerStands();
+                enableActionButtons(false);
+            } else if (game.player1HasBusted()) {
+                playerBusts();
+                enableActionButtons(false);
+            }*/
+        } else {
+            broadcastHitRequest();
+        }
+    }
+    private void broadcastHostHit(Card cardDealt) {
+        byte[] buffer = new byte[4];
+        buffer[0] = (byte) 'H';
+        buffer[1] = (byte) 1; // 1: Host card | 2: Non-host player card
+        buffer[2] = cardDealt.getSuitByte();
+        buffer[3] = cardDealt.getValueByte();
+        broadcastMessageBuffer(buffer);
+    }
+    private void broadcastHitRequest() {
+        byte[] buffer = new byte[2];
+        buffer[0] = (byte) 'H';
+        buffer[1] = (byte) 0;
+        broadcastMessageBuffer(buffer);
+    }
+    private void broadcastPlayerHit(Card cardDealt) {
+        byte[] buffer = new byte[4];
+        buffer[0] = (byte) 'H';
+        buffer[1] = (byte) 2; // 1: Host card | 2: Non-host player card
+        buffer[2] = cardDealt.getSuitByte();
+        buffer[3] = cardDealt.getValueByte();
+        broadcastMessageBuffer(buffer);
     }
 
     private void playerStands() {
@@ -445,7 +557,11 @@ public class OnlineActivity extends AppCompatActivity
     }
 
     private void playerBlackjack() {
-        // game.playerWinBlackjack();
+        // this method is called for the player that got a blackjack
+        if (mIAmHost)
+            game.player1WinBlackjack();
+        else game.player2WinBlackjack();
+
         resultText.setText(R.string.you_got_blackjack);
         showResult();
     }
@@ -488,7 +604,10 @@ public class OnlineActivity extends AppCompatActivity
 
     private void showResult() {
         resultLayout.setVisibility(View.VISIBLE);
-        // balanceText1.setText(String.valueOf(game.getPlayerBalance()));
+        if (mIAmHost)
+            balanceText1.setText(String.valueOf(game.getPlayer1Balance()));
+        else
+            balanceText2.setText(String.valueOf(game.getPlayer2Balance()));
     }
 
     private void gameOver() {
@@ -579,7 +698,7 @@ public class OnlineActivity extends AppCompatActivity
         rtmConfigBuilder.setAutoMatchCriteria(autoMatchCriteria);
         switchToScreen(R.id.screen_wait);
         keepScreenOn();
-        // resetGameVars();
+        resetGameVars();
         Games.RealTimeMultiplayer.create(mGoogleApiClient, rtmConfigBuilder.build());
     }
 
@@ -596,7 +715,7 @@ public class OnlineActivity extends AppCompatActivity
                 .setRoomStatusUpdateListener(this);
         switchToScreen(R.id.screen_wait);
         keepScreenOn();
-        // resetGameVars();
+        resetGameVars();
         Games.RealTimeMultiplayer.join(mGoogleApiClient, roomConfigBuilder.build());
     }
 
@@ -663,8 +782,8 @@ public class OnlineActivity extends AppCompatActivity
                 // we got the result from the "waiting room" UI
                 if (responseCode == Activity.RESULT_OK) {
                     // ready to start playing
-                    Log.d(TAG, "Starting game (waiting room returned OK).");
-                    startNewGame();
+                    Log.d(TAG, "Starting game (waiting room returned OK) ...");
+                    setupInitialGameData();
                 } else if (responseCode == GamesActivityResultCodes.RESULT_LEFT_ROOM) {
                     // player indicated that they want to leave the room
                     leaveRoom();
@@ -692,7 +811,6 @@ public class OnlineActivity extends AppCompatActivity
     // "Invite friends" button. We react by creating a room with those players.
     private void handleSelectPlayersResult(int response, Intent data) {
         if (response != Activity.RESULT_OK) {
-            // Log.w(TAG, "*** select players UI cancelled, " + response);
             switchToMainScreen();
             return;
         }
@@ -721,7 +839,7 @@ public class OnlineActivity extends AppCompatActivity
         }
         switchToScreen(R.id.screen_wait);
         keepScreenOn();
-        // resetGameVars();
+        resetGameVars();
         Games.RealTimeMultiplayer.create(mGoogleApiClient, rtmConfigBuilder.build());
         Log.d(TAG, "Room created, waiting for it to be ready...");
     }
@@ -885,11 +1003,14 @@ public class OnlineActivity extends AppCompatActivity
     // is connected yet).
     @Override
     public void onConnectedToRoom(Room room) {
-        Log.d(TAG, "onConnectedToRoom.");
+        Log.d(TAG, "onConnectedToRoom");
 
-        //get participants and my ID:
+        // get participants and my ID:
         mParticipants = room.getParticipants();
         mMyId = room.getParticipantId(Games.Players.getCurrentPlayerId(mGoogleApiClient));
+
+        // determine host
+        mIAmHost = mMyId.equals(mParticipants.get(0).getParticipantId());
 
         // save room ID if its not initialized in onRoomCreated() so we can leave cleanly before the game starts.
         if (mRoomId == null)
@@ -930,11 +1051,16 @@ public class OnlineActivity extends AppCompatActivity
     * COMMUNICATIONS SECTION
     */
 
-    // Score of other participants. We update this as we receive their scores from the network.
-    Map<String, Integer> mParticipantScore = new HashMap<String, Integer>();
+    // Game states
+    private static final int WAITING_FOR_BETS = 0;
+    private static final int ROUND_IN_PROGRESS = 1;
+    private static int CURRENT_GAME_STATE;
 
-    // Participants who sent us their final score.
-    Set<String> mFinishedParticipants = new HashSet<String>();
+    // Bet of other participants. We update as we receive their bets from the network.
+    private Map<String, Integer> mParticipantBets = new HashMap<>();
+
+    // Participants who have lost the game
+    private Set<String> mFinishedParticipants = new HashSet<>();
 
     // Called when we receive a real-time message from the network.
     @Override
@@ -942,35 +1068,63 @@ public class OnlineActivity extends AppCompatActivity
         byte[] buf = rtm.getMessageData();
         String sender = rtm.getSenderParticipantId();
         Log.d(TAG, "Message received: " + (char) buf[0] + "/" + (int) buf[1]);
-        /*
-        if (buf[0] == 'F' || buf[0] == 'U') {
-            // score update.
-            int existingScore = mParticipantScore.containsKey(sender) ?
-                    mParticipantScore.get(sender) : 0;
-            int thisScore = (int) buf[1];
-            if (thisScore > existingScore) {
-                // this check is necessary because packets may arrive out of
-                // order, so we
-                // should only ever consider the highest score we received, as
-                // we know in our
-                // game there is no way to lose points. If there was a way to
-                // lose points,
-                // we'd have to add a "serial number" to the packet.
-                mParticipantScore.put(sender, thisScore);
-            }
 
-            // update the scores on the screen
-            updatePeerScoresDisplay();
-
-            // if it's a final score, mark this participant as having finished
-            // the game
-            if ((char) buf[0] == 'F') {
-                mFinishedParticipants.add(rtm.getSenderParticipantId());
+        if (buf[0] == 'D') {
+            // other player has bet
+            if (! mParticipantBets.containsKey(sender)) {
+                updatePeerBet(sender, (int) buf[1]);
             }
-        }*/
+        } else if (buf[0] == 'I') {
+            // the initial round data has arrived (all players received it, except the host)
+            decodeAndSetRoundData(buf);
+        } else if (buf[0] == 'H') {
+            if (buf[1] == 0) { // deal request
+                attendDealRequest();
+            } else { // 1, 2
+                updatePeerCards(buf);
+            }
+        }
     }
 
+    private void checkIfAllBet() {
+        if (mParticipantBets.size() == 2 && CURRENT_GAME_STATE == WAITING_FOR_BETS) {
+            dealCompleted();
+            CURRENT_GAME_STATE = ROUND_IN_PROGRESS;
+        }
+    }
 
+    private void decodeAndSetRoundData(byte[] buffer) {
+        // dealer hand
+        Card firstCard = new Card(buffer[1], buffer[2]);
+        Card secondCard = new Card(buffer[3], buffer[4]);
+        Hand hand = new Hand(firstCard, secondCard);
+        game.setDealerHand(hand);
+
+        // player 1
+        firstCard = new Card(buffer[5], buffer[6]);
+        secondCard = new Card(buffer[7], buffer[8]);
+        hand = new Hand(firstCard, secondCard);
+        game.setPlayer1Hand(hand);
+
+        // player 2
+        firstCard = new Card(buffer[9], buffer[10]);
+        secondCard = new Card(buffer[11], buffer[12]);
+        hand = new Hand(firstCard, secondCard);
+        game.setPlayer2Hand(hand);
+
+        updateCardsAndScores();
+        enableActionButtons(true);
+    }
+
+    private void attendDealRequest() {
+        if (! mIAmHost) return;
+
+        // the host will resolve the request
+        Card cardDealt = game.dealPlayer2Card();
+        playerCardAdapter2.notifyDataSetChanged();
+        scoreText2.setText(String.valueOf(game.getPlayer2Score()));
+        broadcastPlayerHit(cardDealt);
+    }
 
     /*
     * UI SECTION
@@ -978,18 +1132,18 @@ public class OnlineActivity extends AppCompatActivity
 
     // This array lists everything that's clickable, so we can install click
     // event handlers.
-    final static int[] CLICKABLES = {
+    private final static int[] CLICKABLES = {
             R.id.button_accept_popup_invitation, R.id.button_invite_players,
             R.id.button_quick_game, R.id.button_see_invitations, R.id.button_sign_in,
             R.id.button_sign_out
     };
     // This array lists all the individual screens our game has.
-    final static int[] SCREENS = {
+    private final static int[] SCREENS = {
             R.id.screen_game, R.id.screen_main, R.id.screen_sign_in, R.id.screen_wait
     };
-    int mCurScreen = -1;
+    private int mCurScreen = -1;
 
-    void switchToMainScreen() {
+    private void switchToMainScreen() {
         if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
             switchToScreen(R.id.screen_main);
         }
@@ -998,7 +1152,7 @@ public class OnlineActivity extends AppCompatActivity
         }
     }
 
-    void switchToScreen(int screenId) {
+    private void switchToScreen(int screenId) {
         // make the requested screen visible; hide all others.
         for (int id : SCREENS) {
             findViewById(id).setVisibility(screenId == id ? View.VISIBLE : View.GONE);
@@ -1017,7 +1171,24 @@ public class OnlineActivity extends AppCompatActivity
         findViewById(R.id.invitation_popup).setVisibility(showInvPopup ? View.VISIBLE : View.GONE);
     }
 
-    void updateRoom(Room room) {
+    private void updateCardsAndScores() {
+        // TODO: update the card adapter instead of re-instantiate
+        dealerCardAdapter = new CardAdapter(game.getDealerHand());
+        playerCardAdapter1 = new CardAdapter(game.getPlayer1Hand());
+        playerCardAdapter2 = new CardAdapter(game.getPlayer2Hand());
+
+        rvCardsDealer.setAdapter(dealerCardAdapter);
+        rvCards1.setAdapter(playerCardAdapter1);
+        rvCards2.setAdapter(playerCardAdapter2);
+
+        // update the scores
+        scoreText1.setText(String.valueOf(game.getPlayer1Score()));
+        scoreLayout1.setVisibility(View.VISIBLE);
+        scoreText2.setText(String.valueOf(game.getPlayer2Score()));
+        scoreLayout2.setVisibility(View.VISIBLE);
+    }
+
+    private void updateRoom(Room room) {
         if (room != null) {
             mParticipants = room.getParticipants();
         }
@@ -1026,18 +1197,44 @@ public class OnlineActivity extends AppCompatActivity
         }
     }
     // updates the screen with the scores from our peers
-    void updatePeerScoresDisplay() {
-        Toast.makeText(this, "updates the screen with the scores; myId is " + mMyId, Toast.LENGTH_SHORT).show();
+    private void updatePeerScoresDisplay() {
+        Toast.makeText(this, "updatePeerScoresDisplay called", Toast.LENGTH_SHORT).show();
+    }
+    // update the screen with the bet from our peers
+    private void updatePeerBet(String participantId, int bet) {
+        mParticipantBets.put(participantId, bet);
+        // for 2 players, the incoming bet message is always from the counterpart
+        if (mIAmHost) { // if I am host, the sender is the player 2
+            // update the model
+            game.player2Bet(bet);
+            // update the UI
+            balanceText2.setText(String.valueOf(game.getPlayer2Balance()));
+            betText2.setText(String.valueOf(bet));
+            betText2.setVisibility(View.VISIBLE);
+        } else {
+            // update the model
+            game.player1Bet(bet);
+            // update the UI
+            balanceText1.setText(String.valueOf(game.getPlayer1Balance()));
+            betText1.setText(String.valueOf(bet));
+            betText1.setVisibility(View.VISIBLE);
+        }
 
-        if (mRoomId != null) {
-            for (Participant p : mParticipants) {
-                String pid = p.getParticipantId();
-                if (pid.equals(mMyId))
-                    continue;
-                if (p.getStatus() != Participant.STATUS_JOINED)
-                    continue;
-                Toast.makeText(this, "pid => " + pid, Toast.LENGTH_LONG).show();
-            }
+        checkIfAllBet();
+    }
+    // update the screen with the results of a player hit
+    private void updatePeerCards(byte[] buf) {
+        // buf[0] is 'H' and buf[1] is not 0 (0 is used for hit requests)
+        // decode the card
+        Card cardDealt = new Card(buf[2], buf[3]);
+        if (buf[1] == 1) { // host hit results
+            game.setPlayer1CardDealt(cardDealt);
+            playerCardAdapter1.notifyDataSetChanged();
+            scoreText1.setText(String.valueOf(game.getPlayer1Score()));
+        } else { // player 2 results
+            game.setPlayer2CardDealt(cardDealt);
+            playerCardAdapter2.notifyDataSetChanged();
+            scoreText2.setText(String.valueOf(game.getPlayer2Score()));
         }
     }
 
@@ -1063,4 +1260,20 @@ public class OnlineActivity extends AppCompatActivity
         switchToMainScreen();
     }
 
+    private void broadcastMessageBuffer(byte[] bufferToSend) {
+        // The buffer is defined in other method and then this method is called
+
+        // Send to every OTHER participant
+        for (Participant p : mParticipants) {
+            if (p.getParticipantId().equals(mMyId)) // exclude myself
+                continue;
+            if (p.getStatus() != Participant.STATUS_JOINED)// just joined participants
+                continue;
+
+            // send via reliable message
+            Games.RealTimeMultiplayer.sendReliableMessage(mGoogleApiClient, null, bufferToSend,
+                    mRoomId, p.getParticipantId());
+            // in this case we are not using unreliable messages (they are faster)
+        }
+    }
 }

@@ -1,6 +1,8 @@
 package com.gamevenez.a21barth.a21barth.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 import com.gamevenez.a21barth.a21barth.utils.Scorer;
@@ -13,6 +15,11 @@ public class Hand {
 
     public Hand(List<Card> cards) {
         this.cards = cards;
+        calculateSum();
+    }
+
+    public Hand(Card... cards) {
+        this.cards = new LinkedList<>(Arrays.asList(cards));
         calculateSum();
     }
 

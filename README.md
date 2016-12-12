@@ -91,6 +91,6 @@ En el caso de 21Barth, debemos manejar más tipos de mensajes. Estos mensajes com
 - Solicitar carta. Indica que el jugador ha presionado el botón HIT. En este caso el host va a generar una carta y hará broadcast de este valor (no solo al jugador que presionó HIT). Solicitar 1 carta se representa por 2 bytes: el caracter H y el número 0.
 - Repartir carta. Asignar una carta se representa por 4 bytes: el caracter H, un número indicando a quién le pertenece la carta, un caracter que representa un suite (HEARTS, DIAMONDS, CLUBS, SPADES) y un value (representado por un caracter, por ejemplo "A", "Q", "1").
 
-- Finalizar jugada. Indica que el jugador ha presionado el botón STAND. En este caso el buffer a comunicar consta solo de 1 caracter, determinado por la letra S.
+- Finalizar jugada. Indica que el jugador ha presionado el botón STAND. En este caso el buffer a comunicar consta solo de 1 caracter, determinado por la letra S (se reconoce el jugador que ha realizado STAND en base a la variable sender, que está disponible al recibir un reliable mensaje).
 
 - Repartir mano inicial. Este mensaje lo emite el host de la partida y se usa para comunicar las 2 primeras cartas al jugador que no es host. El formato del mensaje es I, seguido de un suite y un value correspondientes a la primera carta, y luego nuevamente un suite y value (segunda carta).

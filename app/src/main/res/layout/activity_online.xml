@@ -417,16 +417,24 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/you_won"
-                        android:id="@+id/txtResult"
+                        android:id="@+id/txtResult1"
                         android:textColor="@color/textColorLight"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/you_won"
+                        android:id="@+id/txtResult2"
+                        android:textColor="@color/textColorLight"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/press_to_continue"
                         android:textColor="@color/textColorLight"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small"/>
                 </LinearLayout>
 
                 <LinearLayout

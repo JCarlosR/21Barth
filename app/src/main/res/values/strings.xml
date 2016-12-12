@@ -19,12 +19,12 @@
         <item>@string/str_es</item>
     </string-array>
 
-    <!--- Pantalla de bienvenida -->
+    <!--- Main activity -->
     <string name="welcome">Welcome</string>
     <string name="btn_pc">Play</string>
     <string name="btn_online">Play Online</string>
 
-    <!--- Pantalla del juego -->
+    <!--- Game screen -->
     <string name="you_busted" translatable="false">You busted!</string>
     <string name="you_got_blackjack" translatable="false">You got blackjack!</string>
     <string name="dealer_busted" translatable="false">Dealer busted!</string>
@@ -37,6 +37,14 @@
     <string name="game_over" translatable="false">Game over!</string>
     <string name="hit" translatable="false">Hit</string>
     <string name="stand" translatable="false">Stand</string>
+
+    <!-- Multi-player game screen -->
+    <string name="p_you_busted" translatable="false">P%d: You busted!</string>
+    <string name="p_you_got_blackjack" translatable="false">P%d: You got blackjack!</string>
+    <string name="p_dealer_busted" translatable="false">P%d: Dealer busted!</string>
+    <string name="p_draw" translatable="false">P%d: Draw!</string>
+    <string name="p_you_won" translatable="false">P%d: You won!</string>
+    <string name="p_dealer_won" translatable="false">P%d: Dealer won!</string>
 
     <!-- Player labels -->
     <string name="current_bet_label">Bet</string>

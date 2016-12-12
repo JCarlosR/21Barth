@@ -61,9 +61,9 @@ public class OnlineActivity extends AppCompatActivity
     private RecyclerView rvCardsDealer, rvCards1, rvCards2;
     private CardAdapter dealerCardAdapter, playerCardAdapter1, playerCardAdapter2;
     private TextView dealerScoreText, scoreText1, scoreText2,
-            betText1, betText2,
+            betText1, betText2, amountToBetText,
             balanceText1, balanceText2,
-            amountToBetText, resultText;
+            resultText1, resultText2;
     private Button hitButton, standButton, minusButton, plusButton, dealButton;
     private FrameLayout dealerScoreLayout, scoreLayout1, scoreLayout2;
     private LinearLayout resultLayout, gameOverLayout;
@@ -216,7 +216,8 @@ public class OnlineActivity extends AppCompatActivity
         amountToBetText = (TextView)findViewById(R.id.txtBetOptions);
         amountToBetText.setText(String.valueOf(currentBet));
         // Result messages
-        resultText = (TextView)findViewById(R.id.txtResult);
+        resultText1 = (TextView)findViewById(R.id.txtResult1);
+        resultText2 = (TextView)findViewById(R.id.txtResult2);
 
         // Option buttons
         hitButton = (Button)findViewById(R.id.btnHit);
@@ -338,29 +339,7 @@ public class OnlineActivity extends AppCompatActivity
     private void resetGameVars()
     {
         game.resetPlayersBalance();
-        game.resetPlayersHands();
-        currentBet = MINIMUM_BET;
-        amountToBetText.setText(String.valueOf(currentBet));
-
-        if (dealerCardAdapter != null)
-            dealerCardAdapter.notifyDataSetChanged();
-        if (playerCardAdapter1 != null)
-            playerCardAdapter1.notifyDataSetChanged();
-        if (playerCardAdapter2 != null)
-            playerCardAdapter2.notifyDataSetChanged();
-
-        betText1.setVisibility(View.INVISIBLE);
-        balanceText1.setText(String.valueOf(game.getPlayer1Balance()));
-        betText2.setVisibility(View.INVISIBLE);
-        balanceText2.setText(String.valueOf(game.getPlayer2Balance()));
-
-        enableActionButtons(false);
-        enableDealButtons(true);
-
-        dealerScoreLayout.setVisibility(View.INVISIBLE);
-        scoreLayout1.setVisibility(View.INVISIBLE);
-        scoreLayout2.setVisibility(View.INVISIBLE);
-        gameOverLayout.setVisibility(View.INVISIBLE);
+        newRound();
     }
 
     private void dealCards() {
@@ -415,10 +394,13 @@ public class OnlineActivity extends AppCompatActivity
         // enable the action buttons for the host
         enableActionButtons(true);
 
-        // if the host got blackjack
+        // check if any player got blackjack; nobody will get busted immediately after the deal
         if (game.player1HasBlackjack()) {
             enableActionButtons(false);
-            playerBlackjack();
+            player1Blackjack();
+        }
+        if (game.player2HasBlackjack()) {
+            player2Blackjack();
         }
 
         broadcastDealResults();
@@ -461,21 +443,34 @@ public class OnlineActivity extends AppCompatActivity
     private void newRound() {
         game.resetPlayersHands();
         currentBet = MINIMUM_BET;
-
-        dealerCardAdapter.notifyDataSetChanged();
-        playerCardAdapter1.notifyDataSetChanged();
-
-        dealerScoreText.setText("?");
-        scoreText1.setText("");
-        betText1.setVisibility(View.GONE);
         amountToBetText.setText(String.valueOf(currentBet));
+
+        if (dealerCardAdapter != null)
+            dealerCardAdapter.notifyDataSetChanged();
+        if (playerCardAdapter1 != null)
+            playerCardAdapter1.notifyDataSetChanged();
+        if (playerCardAdapter2 != null)
+            playerCardAdapter2.notifyDataSetChanged();
+
+        betText1.setVisibility(View.INVISIBLE);
+        balanceText1.setText(String.valueOf(game.getPlayer1Balance()));
+        betText2.setVisibility(View.INVISIBLE);
+        balanceText2.setText(String.valueOf(game.getPlayer2Balance()));
+
+        resultText1.setText("");
+        resultText2.setText("");
 
         enableActionButtons(false);
         enableDealButtons(true);
 
         dealerScoreLayout.setVisibility(View.INVISIBLE);
         scoreLayout1.setVisibility(View.INVISIBLE);
+        scoreLayout2.setVisibility(View.INVISIBLE);
+        gameOverLayout.setVisibility(View.INVISIBLE);
         resultLayout.setVisibility(View.INVISIBLE);
+
+        mParticipantBets.clear();
+        mFinishedParticipants.clear();
     }
 
     private void playerHits() {
@@ -484,14 +479,14 @@ public class OnlineActivity extends AppCompatActivity
             playerCardAdapter1.notifyDataSetChanged();
             scoreText1.setText(String.valueOf(game.getPlayer1Score()));
             broadcastHostHit(cardDealt);
-/*
+
             if (game.player1HasBlackjack()) {
-                playerStands();
+                playerStands(); // broadcast my "auto fired" stand
                 enableActionButtons(false);
             } else if (game.player1HasBusted()) {
-                playerBusts();
+                player1Busts();
                 enableActionButtons(false);
-            }*/
+            }
         } else {
             broadcastHitRequest();
         }
@@ -520,11 +515,28 @@ public class OnlineActivity extends AppCompatActivity
     }
 
     private void playerStands() {
+        // add my id to the finished round participants
+        mFinishedParticipants.add(mMyId);
+
+        // and broadcast that to the other players
+        byte[] buffer = new byte[2];
+        buffer[0] = 'S';
+        buffer[1] = (byte) (mIAmHost? 1 : 2);
+        broadcastMessageBuffer(buffer);
+
+        enableActionButtons(false);
+
+        checkIfAllFinished();
+    }
+
+    private void roundCompleted() {
         game.dealerShowHoleCard();
 
         dealerCardAdapter.notifyDataSetChanged();
         dealerScoreText.setText(String.valueOf(game.getDealerScore()));
 
+        Toast.makeText(this, "ROUND COMPLETED !", Toast.LENGTH_SHORT).show();
+/*      TODO: Add draw card action to the dealer
         while (game.dealerShouldDrawCard()) {
             game.dealDealerCard();
 
@@ -537,69 +549,114 @@ public class OnlineActivity extends AppCompatActivity
                 return;
             }
         }
+*/
+        GameOnline.Outcome outcomePlayer1 = game.getOutcome1();
+        GameOnline.Outcome outcomePlayer2 = game.getOutcome2();
 
-        /* Game.Outcome outcome = game.getOutcome();
-        enableActionButtons(false);
-
-        switch (outcome) {
+        switch (outcomePlayer1) {
             case DEALER:
-                playerLoses();
-                enableActionButtons(false);
+                player1Loses();
                 break;
             case PLAYER:
-                playerWins();
-                enableActionButtons(false);
+                player1Wins();
                 break;
             default:
-                draw();
-                enableActionButtons(false);
-        }*/
+                player1Draws();
+        }
+        switch (outcomePlayer2) {
+            case DEALER:
+                player2Loses();
+                break;
+            case PLAYER:
+                player2Wins();
+                break;
+            default:
+                player2Draws();
+        }
+
+        enableActionButtons(false);
+        showResult();
     }
 
-    private void playerBlackjack() {
-        // this method is called for the player that got a blackjack
+    private void player1Blackjack() {
+        game.player1WinBlackjack();
+        resultText1.setText(getString(R.string.p_you_got_blackjack, 1));
+
         if (mIAmHost)
-            game.player1WinBlackjack();
-        else game.player2WinBlackjack();
+            showResult();
+    }
+    private void player2Blackjack() {
+        game.player2WinBlackjack();
+        resultText2.setText(getString(R.string.p_you_got_blackjack, 2));
 
-        resultText.setText(R.string.you_got_blackjack);
-        showResult();
+        if (! mIAmHost) // just if I am the 2nd player
+            showResult();
     }
 
-    private void playerWins() {
-        // game.playerWin();
-        resultText.setText(R.string.you_won);
-        showResult();
+    private void player1Wins() {
+        game.player1Win();
+        resultText1.setText(getString(R.string.p_you_won, 1));
+    }
+    private void player2Wins() {
+        game.player2Win();
+        resultText2.setText(getString(R.string.p_you_won, 2));
     }
 
     private void dealerBusts() {
         // game.playerWin();
-        resultText.setText(R.string.dealer_busted);
+        // resultText.setText(R.string.dealer_busted);
         showResult();
     }
 
-    private void draw() {
-        // game.draw();
-        resultText.setText(R.string.draw);
-        showResult();
+    private void player1Draws() {
+        game.player1Draw();
+        resultText1.setText(getString(R.string.p_draw, 1));
+    }
+    private void player2Draws() {
+        game.player2Draw();
+        resultText2.setText(getString(R.string.p_draw, 2));
     }
 
-    private void playerBusts() {
-        /*if (game.isGameOver()) {
+    private void player1Busts() {
+        if (game.isPlayer1GameOver()) {
+            // NO broadcastGameOver! each player detect the results based on the game data
             gameOver();
             return;
         }
-        resultText.setText(R.string.you_busted);
-        showResult();*/
-    }
 
-    private void playerLoses() {
-        /*if (game.isGameOver()) {
+        resultText1.setText(getString(R.string.p_you_busted, 1));
+        // NO broadcastRoundResults! each player detect the results based on the game data
+
+        if (mIAmHost)
+            showResult(); // the 2nd player probably is still playing
+    }
+    private void player2Busts() {
+        if (game.isPlayer2GameOver()) {
             gameOver();
             return;
         }
-        resultText.setText(R.string.dealer_won);
-        showResult();*/
+
+        resultText2.setText(getString(R.string.p_you_busted, 2));
+
+        if (! mIAmHost) // just if i am the 2nd player
+            showResult(); // because the 1st player probably is still playing
+    }
+
+    private void player1Loses() {
+        if (game.isPlayer1GameOver()) {
+            gameOver();
+            return;
+        }
+
+        resultText1.setText(getString(R.string.p_dealer_won, 1));
+    }
+    private void player2Loses() {
+        if (game.isPlayer2GameOver()) {
+            gameOver();
+            return;
+        }
+
+        resultText2.setText(getString(R.string.p_dealer_won, 2));
     }
 
     private void showResult() {
@@ -1054,13 +1111,17 @@ public class OnlineActivity extends AppCompatActivity
     // Game states
     private static final int WAITING_FOR_BETS = 0;
     private static final int ROUND_IN_PROGRESS = 1;
+    private static final int ROUND_COMPLETED = 2;
     private static int CURRENT_GAME_STATE;
 
     // Bet of other participants. We update as we receive their bets from the network.
     private Map<String, Integer> mParticipantBets = new HashMap<>();
 
-    // Participants who have lost the game
+    // Participants who have completed their turn (stand or busted)
     private Set<String> mFinishedParticipants = new HashSet<>();
+
+    // Participants who have lost the game
+    private Set<String> mLostParticipants = new HashSet<>();
 
     // Called when we receive a real-time message from the network.
     @Override
@@ -1082,6 +1143,11 @@ public class OnlineActivity extends AppCompatActivity
                 attendDealRequest();
             } else { // 1, 2
                 updatePeerCards(buf);
+            }
+        } else if (buf[0] == 'S') { // stand performed
+            if (! mFinishedParticipants.contains(sender)) {
+                mFinishedParticipants.add(sender);
+                checkIfAllFinished();
             }
         }
     }
@@ -1113,7 +1179,16 @@ public class OnlineActivity extends AppCompatActivity
         game.setPlayer2Hand(hand);
 
         updateCardsAndScores();
-        enableActionButtons(true);
+
+        // check if any player got blackjack; nobody will get busted immediately after the deal
+        if (game.player1HasBlackjack()) {
+            player1Blackjack();
+        }
+        if (game.player2HasBlackjack()) {
+            enableActionButtons(false);
+            player2Blackjack();
+            playerStands(); // broadcast STAND, so both are marked as finished round players
+        } else enableActionButtons(true); // action buttons was disabled
     }
 
     private void attendDealRequest() {
@@ -1123,7 +1198,19 @@ public class OnlineActivity extends AppCompatActivity
         Card cardDealt = game.dealPlayer2Card();
         playerCardAdapter2.notifyDataSetChanged();
         scoreText2.setText(String.valueOf(game.getPlayer2Score()));
+
+        if (game.player2HasBusted()) {
+            player2Busts();
+        }
+
         broadcastPlayerHit(cardDealt);
+    }
+
+    private void checkIfAllFinished() {
+        if (mFinishedParticipants.size() == 2 && CURRENT_GAME_STATE == ROUND_IN_PROGRESS) {
+            roundCompleted();
+            CURRENT_GAME_STATE = ROUND_COMPLETED;
+        }
     }
 
     /*
@@ -1198,7 +1285,7 @@ public class OnlineActivity extends AppCompatActivity
     }
     // updates the screen with the scores from our peers
     private void updatePeerScoresDisplay() {
-        Toast.makeText(this, "updatePeerScoresDisplay called", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "updatePeerScores; I am host? => " + mIAmHost, Toast.LENGTH_SHORT).show();
     }
     // update the screen with the bet from our peers
     private void updatePeerBet(String participantId, int bet) {
@@ -1229,13 +1316,32 @@ public class OnlineActivity extends AppCompatActivity
         Card cardDealt = new Card(buf[2], buf[3]);
         if (buf[1] == 1) { // host hit results
             game.setPlayer1CardDealt(cardDealt);
+
             playerCardAdapter1.notifyDataSetChanged();
             scoreText1.setText(String.valueOf(game.getPlayer1Score()));
+
+            if (game.player1HasBlackjack()) {
+                player1Blackjack();
+            } else if (game.player1HasBusted()) {
+                player1Busts();
+            }
         } else { // player 2 results
             game.setPlayer2CardDealt(cardDealt);
+
             playerCardAdapter2.notifyDataSetChanged();
             scoreText2.setText(String.valueOf(game.getPlayer2Score()));
+
+            if (game.player2HasBlackjack()) {
+                player2Blackjack();
+                playerStands(); // broadcast my "auto fired" stand
+                enableActionButtons(false);
+            } else if (game.player2HasBusted()) {
+                player2Busts();
+                playerStands(); // broadcast my "auto fired" stand
+                enableActionButtons(false);
+            }
         }
+
     }
 
     /*
